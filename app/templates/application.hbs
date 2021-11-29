@@ -1,7 +1,113 @@
-{{page-title "FrontendSparqlInteractiveTutorial"}}
+{{page-title 'FrontendSparqlInteractiveTutorial'}}
 
-{{!-- The following component displays Ember's default welcome message. --}}
-<WelcomePage />
-{{!-- Feel free to remove this! --}}
+<div class='p-8 h-screen'>
+  <div class='mx-auto mb-4 w-100 xl:w-1/2'>
+    <div class='flex flex-col items-center'>
+      <article>
+
+        <header class='mb-4'>
+          <h1>SPARQLing </h1>
+          <p class='italic'>It's only RDF if it comes from the Open Data region
+            of the Web, otherwise it's just sparkling data</p>
+        </header>
+
+        <section class='mb-4'>
+          <header>
+            <h2>Introduction</h2>
+          </header>
+          <p>One of the backbone technologies we use at
+            <a href='https://redpencil.io/'>redpencil.io</a>
+            is SPARQL, a W3C standard designed for querying RDF graphs. It is
+            the main way in which we interact with data, and we firmly believe
+            that having a good grasp of how it works, whether you are a
+            technical person or not, will be very helpful! For that reason,
+            we've written this tutorial to guide you through SPARQL, it's
+            syntax, subtleties, and everything in between.</p>
+
+        </section>
+
+        <section class='mb-4'>
+          <header>
+            <h2>Setup</h2>
+          </header>
+          <p>
+            This tutorial is fully interactive from your web browser. We use
+            <a href='https://triply.cc/docs/yasgui'>Yasgui</a>
+            to interact with our SPARQL data, each exercise has an embedded
+            console you can use to query our data. The code for this tutorial is
+            hosted
+            <a>here</a>, so if you prefer you can run it on your own machine.
+          </p>
+        </section>
+
+        <section class='mb-4'>
+          <header>
+            <h2>References</h2>
+          </header>
+          <p>
+            This tutorial is in large part based upon a number of slide decks
+            available
+            <a>here</a>. If you want more in-depth information about SPARQL, we
+            highly recommend the following resources:
+
+            <ul class='list-disc'>
+              <li class='list-item'>The
+                <a>SPARQL 1.1 W3C specification</a>. This document defines the
+                syntax, semantics and features of SPARQL</li>
+              <li class='list-item'><a
+                  class='link'
+                  href='https://www.w3.org/2004/Talks/17Dec-sparql/intro/all.html](https://www.w3.org/2004/Talks/17Dec-sparql/intro/all.html'
+                >Introduction to RDF Query with SPARQL. Part 1 - Introduction</a></li>
+              <li class='list-item'><a>Learning SPARQL book</a></li>
+            </ul>
+          </p>
+        </section>
+
+        <section>
+          <header>
+            <h2>RDF</h2>
+            <p class='italic'>It's turtles all the way down</p>
+          </header>
+          <p>
+            Before jumping into the how of SPARQL, let's take a look at the why
+            of SPARQL. And there's no better way to answer that than to look at
+            the underlying data we'll be querying. Why query if you do not know
+            what you'll be querying?
+          </p>
+          <p>SPARQL stands for
+            <strong class="font-bold">SPARQL Protocol and RDF Query Language</strong>
+            (yay recursive acronyms!). As you can see, it's a query language for
+            RDF, but what is RDF itself? RDF is the Resource Description
+            Framework, and it's a method for describing or modelling data. In
+            this data model, your data is represented as three-statement facts.
+            These facts, called triples, consist of a subject, a predicate and
+            an object. The subject represents a resource, the predicate is the
+            name of a property that the resource has, and the object is the
+            value of said property. Resources are instances of classes, objects
+            can be instances of classes as well, or they can be literals (like
+            numbers, strings, etc.).</p>
+        </section>
+      </article>
+
+      <Exercise
+        @sparqlEndpoint='http://sparql-demo.s.redpencil.io:8890/sparql'
+        @validQuery='SELECT DISTINCT ?type
+WHERE {
+  ?s rdf:type ?type .
+}'
+      >
+        <h2 class='text-xl font-bold'>What types are defined in our endpoint?</h2>
+        <p>Let's start off with an exploration of the data in our endpoint.
+          Write a query that lists all the different available types.</p>
+        <Hint>
+          SPARQL has a shorthand notation for
+          <code>rdf:type</code>, namely
+          <code>a</code>.
+        </Hint>
+      </Exercise>
+
+    </div>
+  </div>
+</div>
 
 {{outlet}}

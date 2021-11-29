@@ -1,0 +1,11 @@
+.yasgui .tabsList {
+  display: none;
+}
+
+.yasgui .controlbar {
+  display: none;
+}
+
+.yasgui .yasqe .CodeMirror * {
+  font-family: monospace;
+}
