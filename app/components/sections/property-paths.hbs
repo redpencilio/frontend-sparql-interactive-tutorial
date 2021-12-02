@@ -1,0 +1,112 @@
+<header>
+  <h2>Property paths</h2>
+</header>
+
+<p>
+  SPARQL provides us some very handy syntactic sugar to make our triple patterns
+  more expressive while keeping them concise called property paths. The simplest
+  property path is the one we're already used to, where we specify a single
+  property. Let's look at some more advanced examples.
+</p>
+
+<p>
+  Imagine that you want to find out all the actors that have worked together
+  with Kevin Bacon. This pretty simple query could be expressed as follows
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX sor: &lt;https://purl.org/net/soron/&gt;
+
+SELECT ?actor WHERE {
+  ?kevinBacon foaf:name &quot;Kevin Bacon&quot; .
+  ?kevinBacon sor:collaboratedWith ?actor .
+}</code></pre>
+
+<p>
+  This looks promising, but when you check the data, you notice that triples
+  where Kevin Bacon is the object don't match the last triple pattern. To solve
+  this we could add another triple pattern with the subject and object swapped,
+  but a shorter way of expressing that is the following
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>?kevinBacon sor:collaboratedWith|^sor:collaboratedWith ?actor .</code></pre>
+
+<p>
+  This pattern expresses the same condition as described above. The
+  <code>|</code>
+  symbol represents an "or", it tells the SPARQL engine to use the first
+  property to match a triple, and if that wasn't possible then use the second
+  one. The
+  <code>^</code>
+  symbol is for inverting the property.
+  <code>:Thing1 ^:property :Thing2</code>
+  is the same as
+  <code>:Thing2 :property :Thing1</code>.
+</p>
+
+<p>
+  Let's say that we're now interested in increasing the maximum degree of
+  separation, so we're not only interested in those actors that have worked
+  together with Kevin Bacon, but also those who have worked with someone who has
+  worked with Mr. Bacon. We could achieve this by adding another triple pattern,
+  like this
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>?kevinBacon sor:collaboratedWith|^sor:collaboratedWith ?temp .
+?temp sor:collaboratedWith|^sor:collaboratedWith ?actor .</code></pre>
+
+<p>
+  Notice now that we're missing results. First degree of separation is missing,
+  because they get bound to <code>?temp</code>, but we don't select that variable. We could
+  resolve this by changing the second pattern to the following
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>?temp (sor:collaboratedWith|^sor:collaboratedWith)? ?actor .</code></pre>
+
+<p>
+  By using <code>()?</code> we tell the SPARQL engine that it can match this property path
+  either once, or zero times. And in this case, matching zero times would mean
+  that <code>?actor` and `?temp</code> are bound to the same value, so we're still able to
+  capture the actors at one degree of separation.
+</p>
+
+<p>
+  What if we're interested in getting all the actors that have worked together
+  with Kevin Bacon, regardless of their degree of separation? Writing out extra
+  triple patterns wouldn't work this time, because we can't write an infinite
+  amount of patterns. But property paths allow us to achieve this nonetheless
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>?kevinBacon (sor:collaboratedWith|^sor:collaboratedWith)* ?actor .</code></pre>
+
+<p>
+  The <code>*</code> operator tells the SPARQL engine to match the property zero or more
+  times, without an upper bound. Note that if you want to match a property path
+  once or more times, there is also a way to do that, just replace the <code>*</code> with
+  a <code>+</code>.
+</p>
+
+<p>
+  Finally, instead of fetching the URI of the actors, we're just interested in
+  getting their names. Instead of adding a new triple pattern, we can make use
+  of another property path operator
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>?kevinBacon (sor:collaboratedWith|^sor:collaboratedWith)*/foaf:name ?actorName .</code></pre>
+
+<p>
+  The <code>/</code> operator tells the SPARQL engine to match the operator to its right
+  after the operators to its left has matched. In this case, it first matches
+  any actor that reaches Kevin Bacon through a <code>sor:collaboratedWith</code> relation,
+  then it finds the value of <code>foaf:name</code> of said actor.
+</p>
+
+<p>
+  All these path operators can be mixed and match to make your triple patterns
+  as expressive as you desire.
+</p>

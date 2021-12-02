@@ -5,13 +5,13 @@
     <div class='flex flex-col items-center'>
       <article>
 
-        <header class='mb-4'>
+        <header>
           <h1>SPARQLing </h1>
           <p class='italic'>It's only RDF if it comes from the Open Data region
             of the Web, otherwise it's just sparkling data</p>
         </header>
 
-        <section class='mb-4'>
+        <section>
           <header>
             <h2>Introduction</h2>
           </header>
@@ -26,7 +26,7 @@
 
         </section>
 
-        <section class='mb-4'>
+        <section>
           <header>
             <h2>Setup</h2>
           </header>
@@ -40,7 +40,7 @@
           </p>
         </section>
 
-        <section class='mb-4'>
+        <section>
           <header>
             <h2>References</h2>
           </header>
@@ -50,64 +50,49 @@
             <a>here</a>. If you want more in-depth information about SPARQL, we
             highly recommend the following resources:
 
-            <ul class='list-disc'>
-              <li class='list-item'>The
+            <ul>
+              <li>The
                 <a>SPARQL 1.1 W3C specification</a>. This document defines the
                 syntax, semantics and features of SPARQL</li>
-              <li class='list-item'><a
-                  class='link'
-                  href='https://www.w3.org/2004/Talks/17Dec-sparql/intro/all.html](https://www.w3.org/2004/Talks/17Dec-sparql/intro/all.html'
+              <li><a
+                  href='https://www.w3.org/2004/Talks/17Dec-sparql/intro/all.html'
                 >Introduction to RDF Query with SPARQL. Part 1 - Introduction</a></li>
-              <li class='list-item'><a>Learning SPARQL book</a></li>
+              <li><a>Learning SPARQL book</a></li>
             </ul>
           </p>
         </section>
 
         <section>
-          <header>
-            <h2>RDF</h2>
-            <p class='italic'>It's turtles all the way down</p>
-          </header>
-          <p>
-            Before jumping into the how of SPARQL, let's take a look at the why
-            of SPARQL. And there's no better way to answer that than to look at
-            the underlying data we'll be querying. Why query if you do not know
-            what you'll be querying?
-          </p>
-          <p>SPARQL stands for
-            <strong class="font-bold">SPARQL Protocol and RDF Query Language</strong>
-            (yay recursive acronyms!). As you can see, it's a query language for
-            RDF, but what is RDF itself? RDF is the Resource Description
-            Framework, and it's a method for describing or modelling data. In
-            this data model, your data is represented as three-statement facts.
-            These facts, called triples, consist of a subject, a predicate and
-            an object. The subject represents a resource, the predicate is the
-            name of a property that the resource has, and the object is the
-            value of said property. Resources are instances of classes, objects
-            can be instances of classes as well, or they can be literals (like
-            numbers, strings, etc.).</p>
+          <Sections::Rdf />
         </section>
+
+        <section>
+          <Sections::Query />
+        </section>
+
+        <section>
+          <Sections::Update />
+        </section>
+
+        <section>
+          <Sections::PropertyPaths />
+        </section>
+
+        <section>
+          <Sections::Optional />
+        </section>
+
+        <section>
+          <Sections::Filtering />
+        </section>
+
+        <section>
+          <Sections::Modifiers />
+        </section>
+
+        {{outlet}}
+
       </article>
-
-      <Exercise
-        @sparqlEndpoint='http://sparql-demo.s.redpencil.io:8890/sparql'
-        @validQuery='SELECT DISTINCT ?type
-WHERE {
-  ?s rdf:type ?type .
-}'
-      >
-        <h2 class='text-xl font-bold'>What types are defined in our endpoint?</h2>
-        <p>Let's start off with an exploration of the data in our endpoint.
-          Write a query that lists all the different available types.</p>
-        <Hint>
-          SPARQL has a shorthand notation for
-          <code>rdf:type</code>, namely
-          <code>a</code>.
-        </Hint>
-      </Exercise>
-
     </div>
   </div>
 </div>
-
-{{outlet}}

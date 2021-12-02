@@ -1,0 +1,128 @@
+<header>
+  <h2>Update Types</h2>
+</header>
+
+<p>
+  Since version 1.1, SPARQL also supports update operations to modify the
+  triples and graphs in your triplestore. The supported types are
+</p>
+
+<ul class='list-disc'>
+  <li class='list-item'><code>INSERT</code></li>
+  <li class='list-item'><code>DELETE</code></li>
+</ul>
+
+<section>
+  <header>
+    <h3><code>INSERT</code> Update</h3>
+  </header>
+
+  <p>
+    The
+    <code>INSERT</code>
+    operation let's you add triples to your triplestore. It can be used to add
+    new triples as follows
+  </p>
+
+  {{!-- prettier-ignore --}}
+  <pre><code>PREFIX ex: &lt;http://example.org/ns/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+INSERT {
+   ex:JoeTalbot a mo:SoloMusicArtist .
+   ex:JoeTalbot foaf:name &quot;Joe Talbot&quot; .
+}</code></pre>
+
+  <p>
+    but it can also be used alongside a
+    <code>WHERE</code>
+    clause to reshape or extend your existing data
+  </p>
+
+  {{!-- prettier-ignore --}}
+  <pre><code>PREFIX ex: &lt;http://example.org/ns/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+INSERT {
+   ex:JoeTalbot a mo:SoloMusicArtist .
+   ex:JoeTalbot foaf:name &quot;Joe Talbot&quot; .
+   ex:JoeTalbot foaf:member ?idles .
+}
+WHERE {
+  ?idles foaf:name &quot;Idles&quot; .
+  ?idles a mo:MusicGroup .
+}</code></pre>
+</section>
+
+<section>
+  <header>
+    <h3><code>DELETE</code> Update</h3>
+  </header>
+
+  <p>
+    The
+    <code>DELETE</code>
+    oepration works in the same way as
+    <code>INSERT</code>, but for the purpose of removing triples. It can be used
+    to remove triples without any variables, called
+    <em class='italic'>ground truths</em>, if used on its own
+  </p>
+
+  {{!-- prettier-ignore --}}
+  <pre><code>PREFIX ex: &lt;http://example.org/ns/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+DELETE {
+   ex:JoeTalbot a mo:SoloMusicArtist .
+   ex:JoeTalbot foaf:name &quot;Joe Talbot&quot; .
+}</code></pre>
+
+  <p>
+    With a
+    <code>WHERE</code>
+    clause, all the matched triples will get removed
+  </p>
+
+  {{!-- prettier-ignore --}}
+  <pre><code>PREFIX ex: &lt;http://example.org/ns/&gt;
+PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+DELETE
+WHERE {
+   ?joeTalbot foaf:name &quot;Joe Talbot&quot; .
+   ?joeTalbot ?property ?value .
+}</code></pre>
+
+  <p>
+    You can combine the
+    <code>INSERT</code>
+    and
+    <code>DELETE</code>
+    operations to update your data. To do this you would delete the triples you
+    want to update, and insert them with the updated data. Let's say we want to
+    make the
+    <code>foaf:name</code>
+    of the band IDLES be
+    <code>"IDLES"</code>, as opposed to
+    <code>"Idles"</code>. This could be done as follows
+  </p>
+
+  {{!-- prettier-ignore --}}
+  <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+
+DELETE {
+  ?idles foaf:name &quot;Idles&quot; .
+}
+INSERT {
+  ?idles foaf:name &quot;IDLES&quot; .
+}
+WHERE {
+  ?idles foaf:name &quot;Idles&quot; .
+  ?idles a mo:MusicGroup
+}</code></pre>
+
+</section>

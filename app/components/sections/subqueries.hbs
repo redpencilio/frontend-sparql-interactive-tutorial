@@ -1,0 +1,30 @@
+<header>
+  <h2>Subqueries</h2>
+</header>
+
+<p>
+  It's also possible to create subqueries in SPARQL, where queries are nested
+  and the result of inner queries can be used in outer queries. Note that inner
+  queries can only ever be `SELECT` queries, due to the way SPARQL variable
+  scoping works.
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+
+SELECT ?genre ?price (?price / SAMPLE(?totalPrice) * 100 AS ?ratio) WHERE {
+  ?book :genre ?genre;
+        :price ?price .
+  {
+    SELECT (SUM(?p) AS ?totalPrice WHERE {
+      ?book :price ?p .
+    }
+  }
+}
+GROUP BY ?genre</code></pre>
+
+<p>
+  In this example, we use a subquery to find the sum total of all book prices,
+  then we get book prices per genre and calculate what the ratio is of that
+  genre's price.
+</p>

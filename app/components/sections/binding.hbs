@@ -1,0 +1,163 @@
+<header>
+  <h2>Binding variables and built-in functions</h2>
+</header>
+
+<p>
+  SPARQL also provides us mechanisms to assign values to variables manually. We
+  can use
+  <code>BIND</code>
+  for this
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://example.com/&gt;
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+
+:wheelOfTime dcterms:title &quot;The Wheel of Time&quot; .
+:wheelOfTime :price 20 .
+:wheelOfTime :discount 10 .
+
+:dune dcterms:title &quot;Dune&quot; .
+:dune :price 10 .
+:dune :discount 0 .
+
+:discworld dcterms:title &quot;The Colour of Magic&quot; .
+:discworld :price 15 .
+:discworld :discount 30 .</code></pre>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+
+SELECT ?book ?title ?price
+WHERE {
+  ?book dcterms:title ?title .
+  ?book :price ?p .
+  ?book :discount ?discount .
+  BIND(?p - (?discount * ?p / 100) AS ?price)
+}</code></pre>
+
+<p>
+  In this case we use the values of two variables to calculate the final price
+  of each book, and to create a new variable bound to this discounted price we
+  use
+  <code>BIND</code>.
+</p>
+
+<p>
+  The
+  <code>VALUES</code>
+  function we encountered earlier can also be used to bind values to variables.
+  If the variables used inside this function are unbound, instead of filtering,
+  what this function will do is join each matched result with each row specified
+  inside
+  <code>VALUES</code>.
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+
+SELECT ?book ?title ?publisher ?genre
+WHERE {
+  ?book dcterms:title ?title .
+  VALUES (?publisher ?genre) {
+    (&quot;Penguin Random House&quot; &quot;Science fiction&quot;)
+    (&quot;Orbit Books&quot; &quot;Fantasy&quot;)
+  }
+}</code></pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>book</th>
+      <th>title</th>
+      <th>publisher</th>
+      <th>genre</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>:wheelOfTime</td>
+      <td>&quot;The Wheel of Time&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:discworld</td>
+      <td>&quot;The Colour of Magic&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:dune</td>
+      <td>&quot;Dune&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:houseOfLeaves</td>
+      <td>&quot;House of Leaves&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:witcher</td>
+      <td>&quot;The Witcher&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:wheelOfTime</td>
+      <td>&quot;The Wheel of Time&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:discworld</td>
+      <td>&quot;The Colour of Magic&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:dune</td>
+      <td>&quot;Dune&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:houseOfLeaves</td>
+      <td>&quot;House of Leaves&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:witcher</td>
+      <td>&quot;The Witcher&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  SPARQL also provides a number of built-in functions we can use. An exhaustive
+  list can be found here
+  [https://www.w3.org/TR/sparql11-query/#SparqlOps](https://www.w3.org/TR/sparql11-query/#SparqlOps),
+  we will go over some of the most common ones below:
+</p>
+
+<ul>
+  <li><code>isIRI(?var)</code>: checks if a variable is bound to an IRI, which
+    is the same concept as a URI</li>
+  <li><code>isLiteral(?var)</code>: checks if a variable is bound to a literal</li>
+  <li><code>regex(str(?var), "@work.example")</code>: checks if a string matches
+    the given regex</li>
+  <li><code>lang(?var)</code>: returns the language of a string, if it contains
+    a language tag</li>
+  <li><code>langMatches( lang(?l), “en" )</code>: checks if a string matches the
+    given language</li>
+  <li><code>xsd:dateTime("2005-01-01T00:00:00Z")</code>: converts a string to a
+    date time literal</li>
+  <li><code>STRSTARTS(?string, “a”)</code>: checks whether a string starts with
+    the given substring</li>
+</ul>

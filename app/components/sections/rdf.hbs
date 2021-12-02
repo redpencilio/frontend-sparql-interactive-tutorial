@@ -1,0 +1,74 @@
+<header>
+  <h2>RDF</h2>
+  <p class='italic'>It's turtles all the way down</p>
+</header>
+
+<figure>
+  <img src='/assets/images/Example RDF graph.svg' class='mx-auto' />
+  <figcaption>An example of RDF data displayed as a graph</figcaption>
+</figure>
+
+<p>
+  Before jumping into the how of SPARQL, let's take a look at the why of SPARQL.
+  And there's no better way to answer that than to look at the underlying data
+  we'll be querying. Why query if you do not know what you'll be querying?
+</p>
+
+<p>
+  SPARQL stands for
+  <strong class='font-bold'>SPARQL Protocol and RDF Query Language</strong>
+  (yay recursive acronyms!). As you can see, it's a query language for RDF, but
+  what is RDF itself? RDF is the
+  <strong class='font-bold'>Resource Description Framework</strong>, and it's a
+  method for describing or modelling data. In this data model, your data is
+  represented as three-statement facts. These facts, called triples, consist of
+  a subject, a predicate and an object. The subject represents a resource, the
+  predicate is the name of a property that the resource has, and the object is
+  the value of said property. Resources are instances of classes, objects can be
+  instances of classes as well, or they can be literals (like numbers, strings,
+  etc.). Do note that each of these is uniquely identified by a URI.
+</p>
+
+<p>
+  Because RDF is just a framework for the way data should be modelled, there are
+  multiple ways to serialize the data (i.e., ways to write it down). In this
+  tutorial we'll use Turtle syntax, as it's quite compact and easy to read, and
+  it follows SPARQL syntax quite closely. Now, for an example, take the
+  following Turtle file (<code>.ttl</code>):
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code># example01.ttl
+&lt;http://example.org/ns/Sergio&gt; &lt;http://example.org/ns/email&gt; "sergio.fenoll@redpencil.io" .</code></pre>
+
+<p>
+  This turtle file contains a single triple, where the resource
+  <code>http://example.org/ns/Sergio</code>
+  has a property
+  <code>http://example.org/ns/email</code>
+  with value
+  <code>"sergio.fenoll@redpencil.io"</code>. Note how the triple ends with a
+  period. Since it's meant to represent a subject-predicate-object phrase, a
+  period is used to denote the end of the phrase. As you may note, this is quite
+  a handful, with the long URIs. To make our lives a little easier, both Turtle
+  and SPARQL allow us to create prefixes (read: aliases) for the URI base. Let's
+  apply this to the above file:
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code># example02.ttl
+@prefix ns: &lt;http://example.org/ns/&gt; .
+
+ns:Sergio ns:email "sergio.fenoll@redpencil.io" .</code></pre>
+
+<p>
+  The
+  <code>ns:</code>
+  prefix is an alias for the whole base URI, saving us the trouble of having to
+  write the URI over and over again.
+</p>
+<p>In reality, you'll be working with data that contains more than one triple.
+  The data we'll be using for this tutorial is available [here], but we'll
+  provide you a SPARQL endpoint where it's properly shaped into triples, like
+  we've just seen.
+</p>

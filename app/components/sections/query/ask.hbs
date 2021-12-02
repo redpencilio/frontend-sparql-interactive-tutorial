@@ -1,0 +1,44 @@
+<header>
+  <h3><code>ASK</code> Query</h3>
+</header>
+
+<p>
+  The
+  <code>ASK</code>
+  query serves to check whether your dataset conforms to the provided
+  conditions. Instead of returning data, it returns a boolean depending on
+  whether the provided triple patterns were successfully matched or not. This
+  can be especially useful for exploring your data, to gain insights into what
+  kind of relations exist.
+</p>
+<p>
+  An
+  <code>ASK</code>
+  query has the following syntax
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+
+ASK {
+  [a mo:MusicArtist] foaf:made [a mo:Release] .
+}</code></pre>
+
+<p>
+  In this case, we're asking if there exists any music artist who has made a
+  release. For our particular dataset, the response to this query would be
+  simply
+  <code>true</code>.
+  <code>ASK</code>
+  queries are generally faster than
+  <code>SELECT</code>
+  queries. Notice the new syntax using the square brackets
+  <code>[]</code>. This syntax lets us define
+  <em class='italic'>blank nodes</em>, which act like variables but that cannot
+  be referenced. A possible alternative writing of the pattern would be
+  <code>
+    ?artist a mo:MusicArtist. ?artist foaf:made ?release. ?release a mo:Release.
+  </code>, but since we're not interested in the value of any of these
+  variables, the blank node notation lets us shorten our pattern by quite a bit.
+</p>

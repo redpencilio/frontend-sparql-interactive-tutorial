@@ -1,0 +1,104 @@
+<header>
+  <h2>Optional values</h2>
+</header>
+
+<p>
+  Sometimes we might be interested in fetching data that's incomplete. For
+  example, we might want to get books and their publishers, but our dataset
+  might not contain every book's publisher. Luckily SPARQL has a way around
+  this, the `OPTIONAL` keyword, which lets us define some patterns that, in case
+  they don't match, won't discard our results.
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://example.com/&gt;
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+
+:wheelOfTime dcterms:title &quot;The Wheel of Time&quot; .
+:wheelOfTime dcterms:publisher &quot;Orbit Books&quot; .
+
+:dune dcterms:title &quot;Dune&quot; .
+
+:discworld dcterms:title &quot;The Colour of Magic&quot; .
+:discworld dcterms:publisher &quot;Penguin Random House&quot; .</code></pre>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+
+SELECT ?book ?title ?publisher
+WHERE {
+  ?book dcterms:title ?title .
+  ?book dcterms:publisher ?publisher .
+}</code></pre>
+
+<p>
+  This query won't return Dune as it has no publisher, resulting in the
+  following output
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>book</th>
+      <th>title</th>
+      <th>publisher</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>:wheelOftime</td>
+      <td>&quot;The Wheel of Time&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+    </tr>
+    <tr>
+      <td>:discworld</td>
+      <td>&quot;The Colour of Magic&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  If we try with
+  <code>OPTIONAL</code>
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+
+SELECT ?book ?title ?publisher
+WHERE {
+  ?book dcterms:title ?title .
+  OPTIONAL {
+    ?book dcterms:publisher ?publisher .
+  }
+}</code></pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>book</th>
+      <th>title</th>
+      <th>publisher</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>:wheelOftime</td>
+      <td>&quot;The Wheel of Time&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+    </tr>
+    <tr>
+      <td>:discworld</td>
+      <td>&quot;The Colour of Magic&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+    </tr>
+    <tr>
+      <td>:dune</td>
+      <td>&quot;Dune&quot;</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>

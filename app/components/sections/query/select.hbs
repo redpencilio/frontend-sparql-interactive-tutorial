@@ -1,0 +1,150 @@
+<header>
+  <h3><code>SELECT</code> Query</h3>
+</header>
+
+<p>
+  The
+  <code>SELECT</code>
+  query is one of the most important queries you'll be working with. It serves
+  to fetch data from your RDF database (also a called a
+  <em class='italic'>triplestore</em>).
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+
+SELECT ?thing ?type
+FROM &lt;http://example.org/ns/exampleGraph&gt;
+WHERE {
+	?thing rdf:type ?type .
+}</code></pre>
+
+<p>
+  Let's dissect this query. The first thing we encounter is the
+  <code>PREFIX</code>
+  keyword, which behaves in the same way as
+  <code>@prefix</code>
+  did in Turtle, it lets us define a shorthand for a base URI path. The
+  <code>SELECT</code>
+  keyword tells SPARQL that this is a SELECT query. Afterwards, we encounter
+  something new:
+  <code>?thing ?type</code>. These are variables in SPARQL. A word prefixed with
+  a
+  <code>?</code>
+  always denotes a variable in SPARQL. The
+  <code>FROM</code>
+  clause let's us specify the named graph we want to fetch our data from. A
+  triplestore let's you place your data into graphs, which all receive a
+  distinct URI. Inside of the
+  <code>WHERE</code>
+  block, we tell SPARQL what kind of data we want it to retrieve. The very
+  simple pattern we used,
+  <code>?thing rdf:type ?type .</code>
+  simply states: "Give me every triple where the predicate is
+  <code>rdf:type</code>
+  and bind the subject and the object to the variables
+  <code>?thing</code>
+  and
+  <code>?type</code>
+  respectively." The output of this query would then be a table with two
+  columns, ?thing and ?type, with each row containing values extracted from a
+  triple encountered in the triplestore.
+</p>
+
+<table class='table-auto'>
+  <thead>
+    <tr>
+      <th>thing</th>
+      <th>type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a
+          href='http://www.openlinksw.com/virtrdf-data-formats#default-iid'
+        >http://www.openlinksw.com/virtrdf-data-formats#default-iid</a></td>
+      <td><a
+          href='http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat'
+        >http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat</a></td>
+    </tr>
+    <tr>
+      <td><a
+          href='http://www.openlinksw.com/virtrdf-data-formats#default-iid-nullable'
+        >http://www.openlinksw.com/virtrdf-data-formats#default-iid-nullable</a></td>
+      <td><a
+          href='http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat'
+        >http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat</a></td>
+    </tr>
+    <tr>
+      <td><a
+          href='http://www.openlinksw.com/virtrdf-data-formats#default-iid-nonblank'
+        >http://www.openlinksw.com/virtrdf-data-formats#default-iid-nonblank</a></td>
+      <td><a
+          href='http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat'
+        >http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat</a></td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  Queries can contain more than one triple pattern, narrowing down the results
+  obtained. The SPARQL engine will match triples based on the provided patterns
+  from top to bottom, binding values to variables along the way. Once a value
+  has been bound to a variable, said value will take the place of the variable
+  in any pattern that follows. Let's look at an example:
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+
+SELECT ?idles WHERE {
+  ?idles foaf:name &quot;Idles&quot; .
+  ?idles a mo:MusicGroup .
+}</code></pre>
+
+<p>
+  In the above query, the first pattern specifies that we will bind a resource
+  that has a property
+  <code>foaf:name</code>
+  with value
+  <code>"Idles"</code>
+  to the variable
+  <code>?idles</code>. In the next pattern, we make sure that the bound resource
+  is of type
+  <code>mo:MusicGroup</code>. Note the
+  <code>a</code>
+  in the second triple pattern. This is a shorthand of
+  <code>rdf:type</code>
+  that is built into SPARQL. Feel free to use either, both are completely
+  interchangeable.
+</p>
+
+<p>Imagine we have the following dataset:</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix ex: &lt;http://example.com/ns/example/&gt; .
+@prefix mo: &lt;http://purl.org/ontology/mo/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1&gt; .
+
+ex:IdlesBand a mo:MusicGroup .
+ex:IdlesBand foaf:name &quot;Idles&quot; .
+
+ex:NotIdlesBand a ex:NotAMusicGroup .
+ex:NotIdlesBand foaf:name &quot;Idles&quot; .</code></pre>
+
+<p>
+  The first pattern in our query would bind both
+  <code>ex:IdlesBand</code>
+  and
+  <code>ex:NotIdlesBand</code>
+  to
+  <code>?idles</code>, since they both have a
+  <code>foaf:name</code>
+  equal to
+  <code>"Idles"</code>. But once the second pattern gets evaluated,
+  <code>ex:NotIdlesBand</code>
+  will be discarded since the triple
+  <code>ex:NotIdlesBand rdf:type mo:MusicGroup</code>
+  does not exist in our dataset.
+</p>
