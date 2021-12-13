@@ -10,7 +10,7 @@
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX : &lt;http://example.com/&gt;
+{{!-- <pre><code>PREFIX : &lt;http://example.com/&gt;
 
 SELECT ?genre ?price (?price / SAMPLE(?totalPrice) * 100 AS ?ratio) WHERE {
   ?book :genre ?genre;
@@ -21,10 +21,12 @@ SELECT ?genre ?price (?price / SAMPLE(?totalPrice) * 100 AS ?ratio) WHERE {
     }
   }
 }
-GROUP BY ?genre</code></pre>
+GROUP BY ?genre</code></pre> --}}
 
 <p>
   In this example, we use a subquery to find the sum total of all book prices,
   then we get book prices per genre and calculate what the ratio is of that
   genre's price.
 </p>
+
+<Yasgui @defaultQuery={{this.defaultQuery}} @readOnly={{true}} />

@@ -24,7 +24,7 @@
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
 PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
 
 CONSTRUCT {
@@ -36,7 +36,8 @@ WHERE {
   ?artist a ?track .
   ?otherArtist foaf:made ?track .
   FILTER (?artist != ?otherArtist) .
-}</code></pre>
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.exampleQuery}} @readOnly={{true}} />
 
 <p>
   Note the new
@@ -45,3 +46,24 @@ WHERE {
   variables. We will be discuss this language feature more in-depth later, but
   for now know that it can be used to filter out triples from your dataset.
 </p>
+
+<Exercise
+  @validQuery={{this.validQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Let's construct a graph of artists that have collaborated on a work. Use the
+    <code>CONSTRUCT</code>
+    query to create such a graph. You will want to use
+    <code>LIMIT 100</code>
+    to limit the running time of the query. Simple write
+    <code>LIMIT 100</code>
+    after the closing brace of your query.
+  </p>
+  <Hint>
+    You can determine that two artists worked together on a song, album, ... if
+    they both have a
+    <code>foaf:made</code>
+    property with the same work as it's value.
+  </Hint>
+</Exercise>

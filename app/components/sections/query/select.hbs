@@ -11,13 +11,14 @@
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+{{!-- <pre><code>PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 
 SELECT ?thing ?type
 FROM &lt;http://example.org/ns/exampleGraph&gt;
 WHERE {
 	?thing rdf:type ?type .
-}</code></pre>
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.firstExampleQuery}} @readOnly={{true}} />
 
 <p>
   Let's dissect this query. The first thing we encounter is the
@@ -26,8 +27,9 @@ WHERE {
   <code>@prefix</code>
   did in Turtle, it lets us define a shorthand for a base URI path. The
   <code>SELECT</code>
-  keyword tells SPARQL that this is a SELECT query. Afterwards, we encounter
-  something new:
+  keyword tells SPARQL that this is a
+  <code>SELECT</code>
+  query. Afterwards, we encounter something new:
   <code>?thing ?type</code>. These are variables in SPARQL. A word prefixed with
   a
   <code>?</code>
@@ -46,62 +48,28 @@ WHERE {
   <code>?thing</code>
   and
   <code>?type</code>
-  respectively." The output of this query would then be a table with two
-  columns, ?thing and ?type, with each row containing values extracted from a
-  triple encountered in the triplestore.
+  respectively." And the output of this query is a table with two columns, thing
+  and type, with each row containing values extracted from a triple encountered
+  in the triplestore.
 </p>
-
-<table class='table-auto'>
-  <thead>
-    <tr>
-      <th>thing</th>
-      <th>type</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a
-          href='http://www.openlinksw.com/virtrdf-data-formats#default-iid'
-        >http://www.openlinksw.com/virtrdf-data-formats#default-iid</a></td>
-      <td><a
-          href='http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat'
-        >http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat</a></td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://www.openlinksw.com/virtrdf-data-formats#default-iid-nullable'
-        >http://www.openlinksw.com/virtrdf-data-formats#default-iid-nullable</a></td>
-      <td><a
-          href='http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat'
-        >http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat</a></td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://www.openlinksw.com/virtrdf-data-formats#default-iid-nonblank'
-        >http://www.openlinksw.com/virtrdf-data-formats#default-iid-nonblank</a></td>
-      <td><a
-          href='http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat'
-        >http://www.openlinksw.com/schemas/virtrdf#QuadMapFormat</a></td>
-    </tr>
-  </tbody>
-</table>
 
 <p>
   Queries can contain more than one triple pattern, narrowing down the results
   obtained. The SPARQL engine will match triples based on the provided patterns
   from top to bottom, binding values to variables along the way. Once a value
-  has been bound to a variable, said value will take the place of the variable
-  in any pattern that follows. Let's look at an example:
+  has been bound to a variable, it will take the place of the variable in any
+  pattern that follows. Let's look at an example:
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
 PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
 
 SELECT ?idles WHERE {
   ?idles foaf:name &quot;Idles&quot; .
   ?idles a mo:MusicGroup .
-}</code></pre>
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.secondExampleQuery}} @readOnly={{true}} />
 
 <p>
   In the above query, the first pattern specifies that we will bind a resource
@@ -148,3 +116,73 @@ ex:NotIdlesBand foaf:name &quot;Idles&quot; .</code></pre>
   <code>ex:NotIdlesBand rdf:type mo:MusicGroup</code>
   does not exist in our dataset.
 </p>
+
+<p>
+  Now that you have a grasp of how the
+  <code>SELECT</code>
+  query works, let's have a look at some exercises. Don't worry about defining
+  the graphs in these exercises. Although you can, using the
+  <code>FROM</code>
+  keyword, we've setup the Yagui editors to use the correct graphs by default.
+</p>
+
+<Exercise
+  @validQuery={{this.firstExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Let's start off with an exploratory query. We want to find out what types
+    are defined in our endpoint so we know what we can use later. Write a query
+    that returns all the types that are available in our endpoint. To remove
+    duplicates, you will want to use the
+    <code>DISTINCT</code>
+    modifier, which we will look at more in-depth later. Just place it right
+    after the
+    <code>SELECT</code>
+    keyword.
+  </p>
+</Exercise>
+<Exercise
+  @validQuery={{this.secondExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Now that we know that our dataset is filled with musical data, let's see
+    what kind of relationships that data has. Right now we're interested in
+    <code>mo:MusicArtist</code>. Write a query that finds all the properties of
+    <code>mo:MusicArtist</code>. You will want to use
+    <code>DISTINCT</code>
+    again to remove duplicates.
+  </p>
+  <Hint>
+    In this case, we're only interested in properties, or predicates, and they
+    are the second item of a triple.
+  </Hint>
+</Exercise>
+<Exercise
+  @validQuery={{this.thirdExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Given that
+    <code>mo:MusicArtist</code>
+    have a
+    <code>foaf:name</code>, let's write a query that returns the band named
+    "Massive Attack".
+  </p>
+</Exercise>
+<Exercise
+  @validQuery={{this.fourthExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    One more! Now that we have the artist Massive Attack, let's find out who's
+    in the band.
+    <Hint>
+      You can use the property
+      <code>mo:member_of</code>
+      to find a person who is a member of a band, but do keep in mind who is the
+      subject and object of that triple!
+    </Hint>
+  </p>
+</Exercise>

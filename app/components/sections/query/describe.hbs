@@ -15,54 +15,21 @@
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+{{!-- <pre><code>PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
 
-DESCRIBE mo:MusicArtist</code></pre>
+DESCRIBE mo:MusicArtist</code></pre> --}}
+<Yasgui @defaultQuery={{this.firstExampleQuery}} @readOnly={{true}} />
 
 <p>
-  In this case, the URI for
+  Note that in this case, the class
   <code>mo:MusicArtist</code>
-  will be described. Virtuoso, the SPARQL engine we use at redpencil.io, returns
-  the following data
+  itself is being described.
 </p>
-
-<table>
-  <thead>
-    <tr>
-      <th>subject</th>
-      <th>predicate</th>
-      <th>object</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>mo:MusicArtist</td>
-      <td>rdfs:comment</td>
-      <td>&quot; A person or a group of people (or a computer :-) ), whose
-        musical creative work shows sensitivity and imagination &quot;</td>
-    </tr>
-    <tr>
-      <td>mo:MusicArtist</td>
-      <td>rdf:type</td>
-      <td>owl:Class</td>
-    </tr>
-    <tr>
-      <td>...</td>
-      <td>...</td>
-      <td>...</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>
-  Note that in this case, class
-  <code>mo:MusicArtist</code>
-  itself is being described. We can also describe a specific instance of the
-  class
+<p>We can also describe a specific instance of the class
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
 PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
 PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
 PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
@@ -70,69 +37,13 @@ PREFIX open: &lt;http://open.vocab.org/terms/&gt;
 
 DESCRIBE ?artist WHERE {
   ?artist a mo:MusicArtist .
-} LIMIT 1</code></pre>
+} LIMIT 1</code></pre> --}}
+<Yasgui @defaultQuery={{this.secondExampleQuery}} @readOnly={{true}} />
 
 <p>
-  This query will describe a single instance of a mo:MusicArtist (in this case,
-  http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_), and the
-  output will contain all triples where this instance appears
+  This query will describe a single instance of a mo:MusicArtist and the output
+  contains all triples where this instance appears.
 </p>
-
-<table>
-  <thead>
-    <tr>
-      <th>subject</th>
-      <th>predicate</th>
-      <th>object</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><a
-          href='http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_'
-        >http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_</a></td>
-      <td>rdf:type</td>
-      <td>mo:MusicGroup</td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_'
-        >http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_</a></td>
-      <td>open:sortLabel</td>
-      <td>Dito, Signor &amp; Brothers, Molisans</td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_'
-        >http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_</a></td>
-      <td>foaf:name</td>
-      <td>Signor Dito &amp; Molisans Brothers</td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_'
-        >http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_</a></td>
-      <td>rdf:type</td>
-      <td>mo:MusicArtist</td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_'
-        >http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_</a></td>
-      <td>foaf:made</td>
-      <td><a
-          href='http://musicbrainz.org/track/7710738#_'
-        >http://musicbrainz.org/track/7710738#_</a></td>
-    </tr>
-    <tr>
-      <td><a
-          href='http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_'
-        >http://musicbrainz.org/artist/000197f0-b6e1-4c83-853d-44b7277c9c50#_</a></td>
-      <td>mo:musicbrainz_guid</td>
-      <td>000197f0-b6e1-4c83-853d-44b7277c9c50</td>
-    </tr>
-  </tbody>
-</table>
 
 <p>
   You might have noticed the new

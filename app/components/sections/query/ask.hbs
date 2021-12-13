@@ -18,18 +18,17 @@
 </p>
 
 {{!-- prettier-ignore --}}
-<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
 PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
 
 ASK {
   [a mo:MusicArtist] foaf:made [a mo:Release] .
-}</code></pre>
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.exampleQuery}} @readOnly={{true}} />
 
 <p>
   In this case, we're asking if there exists any music artist who has made a
-  release. For our particular dataset, the response to this query would be
-  simply
-  <code>true</code>.
+  record.
   <code>ASK</code>
   queries are generally faster than
   <code>SELECT</code>
@@ -42,3 +41,20 @@ ASK {
   </code>, but since we're not interested in the value of any of these
   variables, the blank node notation lets us shorten our pattern by quite a bit.
 </p>
+
+<Exercise
+  @validQuery={{this.exerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Let's find out if there are any artists who are based in Belgium with the
+    name "Blackwave". Make sure to use the
+    <code>ASK</code>
+    query for this!
+  </p>
+  <Hint>
+    You can use the
+    <code>foaf:based_near</code>
+    property to find out where artists are based.
+  </Hint>
+</Exercise>

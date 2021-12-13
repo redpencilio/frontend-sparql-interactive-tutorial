@@ -5,22 +5,23 @@ import { tracked } from '@glimmer/tracking';
 
 export default class ExerciseComponent extends Component {
   @tracked
-  correctQuery = true;
+  correctQuery = false;
 
-  get sparqlEndpoint() {
-    return this.args.sparqlEndpoint ?? 'http://localhost:8890/sparql';
-  }
-
-  get validQuery() {
-    return this.args.validQuery ?? 'SELECT * WHERE { ?s ?p ?o . } LIMIT 0';
-  }
+  sparqlEndpoint =
+    (this.args.sparqlEndpoint ?? '/sparql') +
+    (this.args.defaultGraph
+      ? `?default-graph-uri=${encodeURIComponent(this.args.defaultGraph)}`
+      : '');
+  validQuery = this.args.validQuery;
 
   @action
   async onQueryEventHandler(_instance, tab) {
     this.correctQuery = false;
+    if (this.validQuery === undefined) {
+      return;
+    }
+
     const query = tab.getQuery();
-    console.log(query);
-    console.log(this.validQuery);
     const response = await fetch(
       `/query-equivalence/equivalent?validQuery=${encodeURIComponent(
         this.validQuery
@@ -30,6 +31,8 @@ export default class ExerciseComponent extends Component {
       }
     );
     const json = await response.json();
-    this.correctQuery = json.data.attributes.equivalent;
+    if (json.data) {
+      this.correctQuery = json.data.attributes.equivalent;
+    }
   }
 }

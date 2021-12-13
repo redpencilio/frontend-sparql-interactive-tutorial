@@ -25,6 +25,42 @@ h2 {
   @apply text-2xl font-bold;
 }
 
+h3 {
+  @apply text-xl font-bold;
+}
+
 * {
   font-family: 'Manrope', sans-serif;
+}
+
+body {
+  background: rgb(255, 255, 255);
+}
+
+p,
+p ~ :not(p),
+:not(p) ~ p {
+  margin-bottom: 27px;
+}
+
+:not(pre) > code {
+  background: rgba(135,131,120,0.15);
+  border-radius: 3px;
+  padding: 0.2em 0.4em;
+  font-size: 16px;
+
+}
+
+pre {
+  background: rgb(247, 246, 243);
+  border-radius: 3px;
+  padding: 32px;
+}
+
+ul:not([class]) {
+  @apply list-disc;
+}
+
+ul:not([class]) > li:not([class]) {
+  @apply list-item;
 }
