@@ -19,9 +19,7 @@ module.exports = {
   env: {
     browser: true,
   },
-  rules: {
-    'prettier/prettier': 'off',
-  },
+  rules: {},
   overrides: [
     // node files
     {

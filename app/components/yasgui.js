@@ -39,6 +39,5 @@ export default class YasguiComponent extends Component {
     // Necessary because if a page contains multiple Yasgui instances, on refresh their query
     // will be overwritten by the last query to run, which is quite strange for a user
     localStorage.removeItem('yagui__config');
-
   }
 }
