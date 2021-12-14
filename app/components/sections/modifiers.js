@@ -8,7 +8,7 @@ export default class SectionsModifiersComponent extends Component {
     'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
     'SELECT ?person ?name\n' +
     'WHERE {\n' +
-    '  ?person foaf:name ?name \n.' +
+    '  ?person foaf:name ?name .\n' +
     '}\n' +
     'ORDER BY ?name';
 
@@ -17,7 +17,7 @@ export default class SectionsModifiersComponent extends Component {
     'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
     'SELECT DISTINCT ?nickName\n' +
     'WHERE {\n' +
-    '  ?person :nickName ?nickName \n.' +
+    '  ?person :nickName ?nickName .\n' +
     '}';
 
   thirdExampleQuery =
@@ -25,7 +25,7 @@ export default class SectionsModifiersComponent extends Component {
     'PREFIX foaf: <http://xmlns.com/foaf/0.1/>\n' +
     'SELECT DISTINCT ?person ?nickName\n' +
     'WHERE {\n' +
-    '  ?person :nickName ?nickName \n.' +
+    '  ?person :nickName ?nickName .\n' +
     '}';
 
   fourthExampleQuery =
