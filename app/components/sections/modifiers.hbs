@@ -1,0 +1,182 @@
+<header>
+  <h2>Query Modifiers &amp; Aggregates</h2>
+</header>
+
+<p>
+  The results of SPARQL queries are unordered, but SPARQL provides some
+  mechanisms to order the resulting data, as well as limit the amount we'll
+  receive. We'll have a short overview of the provided modifiers, feel free to
+  read
+  <a href='https://www.w3.org/TR/sparql11-query/#solutionModifiers'>this section
+    of the language specification</a>
+  for an in-depth explanation.
+</p>
+
+<p>
+  The
+  <code>ORDER BY</code>
+  modifiers lets you order data in ascending or descending order based on one or
+  multiple variables
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://mu.semte.ch/graphs/people&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+
+:alice foaf:name &quot;Alice&quot; .
+:bob foaf:name &quot;Bob&quot; .
+:charlie foaf:name &quot;Charlie&quot; .</code></pre>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+SELECT ?person ?name
+WHERE {
+  ?person foaf:name ?name .
+}
+ORDER BY ?name</code></pre> --}}
+<Yasgui @defaultQuery={{this.firstExampleQuery}} @defaultGraph={{this.peopleGraph}} @readOnly={{true}} />
+
+<p>
+  By default
+  <code>ORDER BY</code>
+  follows an ascending order, so the first row will contain Alice, then Bob,
+  then Charlie. This can be made explicit using
+  <code>ORDER BY ASC(?name)</code>, and if a descending order is preferred
+  <code>ORDER BY DESC(?name)</code>
+  is also available.
+</p>
+
+<p>
+  The
+  <code>DISTINCT</code>
+  modifier removes duplicates from the result set.
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://mu.semte.ch/graphs/people/&gt; .
+
+:robert :nickName &quot;Bob&quot; .
+:rob :nickName &quot;Bob&quot; .</code></pre>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX : &lt;http://example.com/&gt;
+
+SELECT DISTINCT ?nickName
+WHERE {
+  ?person :nickName ?nickName .
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.secondExampleQuery}} @defaultGraph={{this.peopleGraph}} @readOnly={{true}} />
+
+<p>
+  In this case, the result will only contain
+  <code>"Bob"</code>
+  once. Do note that
+  <code>DISTINCT</code>
+  works by removing duplicates over all variables involved. This means that the
+  following query
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX : &lt;http://example.com/&gt;
+
+SELECT DISTINCT ?person ?nickName
+WHERE {
+  ?person :nickName ?nickName .
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.thirdExampleQuery}} @defaultGraph={{this.peopleGraph}} @readOnly={{true}} />
+
+<p>
+  returns two rows, since
+  <code>:robert != :rob</code>.
+</p>
+
+<p>
+  <code>OFFSET</code>
+  starts returning solutions after a certain offset.
+  <code>OFFSET n</code>
+  would ignore the first n solutions and start returning after that. This can be
+  used in conjunction with
+  <code>LIMIT</code>, which limits the amount of results we want to get, and
+  <code>ORDER BY</code>
+  to get a subset of results.
+</p>
+
+<p>
+  Note that the order in which these modifiers are applied follows the order in
+  which they were described here, i.e. the result set will first be ordered,
+  then duplicates will be removed, the offset will be calculated, and finally
+  the number of results will be limited.
+</p>
+
+<p>
+  Aggregates let you compute a result over a group of solutions. For example,
+  instead of getting all the prices of books, you might only want the maximum
+  price. The supported aggregate functions in SPARQL 1.1. are:
+</p>
+
+<ul>
+  <li><code>COUNT</code>: counts the amount of times a result occurs</li>
+  <li><code>SUM</code>: returns a sum of all numeric values a given variable has
+    been bound to</li>
+  <li><code>MIN</code>: returns the smallest value of a variable</li>
+  <li><code>MAX</code>: returns the largest value of a variable</li>
+  <li><code>AVG</code>: returns the average value of a variable</li>
+  <li><code>GROUP_CONCAT</code>: concatenates the values of a variable into one
+    string, accepts a separator</li>
+  <li><code>SAMPLE</code>: returns, at random, one of the values a variable has
+    been bound to</li>
+</ul>
+
+<p>
+  It's also possible to divide the result set into groups before aggregating.
+  For example, we may want to calculate total price of our book collection while
+  differentiating by genre. For this, we'd use the
+  <code>GROUP BY</code>
+  clause
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://mu.semte.ch/graphs//&gt;
+
+:wheelOfTime :genre &quot;Fantasy&quot; .
+:wheelOfTime :price 20 .
+
+:dune :genre &quot;Science fiction&quot; .
+:dune :price 10 .
+
+:discworld :genre &quot;Fantasy&quot; .
+:discworld :price 15 .</code></pre>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX : &lt;http://example.com/&gt;
+
+SELECT ?genre (SUM(?price) AS ?totalPrice)
+WHERE {
+  ?book :genre ?genre;
+        :price ?price
+}
+GROUP BY ?genre</code></pre> --}}
+<Yasgui @defaultQuery={{this.fourthExampleQuery}} @defaultGraph={{this.booksGraph}} @readOnly={{true}} />
+
+<p>
+  It's also possible to filter these aggregates based on the computed aggregate
+  value. For example, if we only want to get
+  <code>(?genre ?totalPrice)</code>
+  pairs where
+  <code>?totalPrice > 10</code>, we would use the
+  <code>HAVING</code>
+  clause
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX : &lt;http://example.com/&gt;
+
+SELECT ?genre (SUM(?price) AS ?totalPrice)
+WHERE {
+  ?book :genre ?genre;
+        :price ?price
+}
+GROUP BY ?genre
+HAVING (SUM(?price) &gt; 10)</code></pre> --}}
+<Yasgui @defaultQuery={{this.fifthExampleQuery}} @defaultGraph={{this.booksGraph}} @readOnly={{true}} />

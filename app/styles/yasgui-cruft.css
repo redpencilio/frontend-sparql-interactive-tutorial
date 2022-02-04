@@ -9,3 +9,8 @@
 .yasgui .yasqe .CodeMirror * {
   font-family: monospace;
 }
+
+/* .yasgui .yasr .yasr_results .dataTables_wrapper {
+  max-height: 400px;
+  overflow-y: scroll;
+} */

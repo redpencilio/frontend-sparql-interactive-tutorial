@@ -1,0 +1,34 @@
+<header>
+  <h2><code>UNION</code></h2>
+</header>
+
+<p>
+  SPARQL also lets us combine graph patterns by using the <code>UNION</code> keyword. When
+  using this, the results of multiple triple patterns will be concatenated.
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://example.com/&gt;
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+@prefix rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt; .
+
+:wheelOfTime dcterms:title &quot;The Wheel of Time&quot; .
+:dune dcterms:title &quot;Dune&quot; .
+:discworld dcterms:title &quot;The Colour of Magic&quot; .
+
+:houseOfLeaves rdfs:label &quot;House of Leaves&quot; .</code></pre>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+
+SELECT ?title WHERE {
+  ?book dcterms:title ?title .
+} UNION {
+  ?book rdfs:label ?title .
+}</code></pre>
+
+<p>
+  This query will output books that have a <code>dcterms:title</code> property as well
+  those that have <code>rdfs:label</code> property.
+</p>

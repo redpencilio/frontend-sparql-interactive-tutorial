@@ -1,0 +1,188 @@
+<header>
+  <h3><code>SELECT</code> Query</h3>
+</header>
+
+<p>
+  The
+  <code>SELECT</code>
+  query is one of the most important queries you'll be working with. It serves
+  to fetch data from your RDF database (also a called a
+  <em class='italic'>triplestore</em>).
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+
+SELECT ?thing ?type
+FROM &lt;http://example.org/ns/exampleGraph&gt;
+WHERE {
+	?thing rdf:type ?type .
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.firstExampleQuery}} @readOnly={{true}} />
+
+<p>
+  Let's dissect this query. The first thing we encounter is the
+  <code>PREFIX</code>
+  keyword, which behaves in the same way as
+  <code>@prefix</code>
+  did in Turtle, it lets us define a shorthand for a base URI path. The
+  <code>SELECT</code>
+  keyword tells SPARQL that this is a
+  <code>SELECT</code>
+  query. Afterwards, we encounter something new:
+  <code>?thing ?type</code>. These are variables in SPARQL. A word prefixed with
+  a
+  <code>?</code>
+  always denotes a variable in SPARQL. The
+  <code>FROM</code>
+  clause let's us specify the named graph we want to fetch our data from. A
+  triplestore let's you place your data into graphs, which all receive a
+  distinct URI. Inside of the
+  <code>WHERE</code>
+  block, we tell SPARQL what kind of data we want it to retrieve. The very
+  simple pattern we used,
+  <code>?thing rdf:type ?type .</code>
+  simply states: "Give me every triple where the predicate is
+  <code>rdf:type</code>
+  and bind the subject and the object to the variables
+  <code>?thing</code>
+  and
+  <code>?type</code>
+  respectively." And the output of this query is a table with two columns, thing
+  and type, with each row containing values extracted from a triple encountered
+  in the triplestore.
+</p>
+
+<p>
+  Queries can contain more than one triple pattern, narrowing down the results
+  obtained. The SPARQL engine will match triples based on the provided patterns
+  from top to bottom, binding values to variables along the way. Once a value
+  has been bound to a variable, it will take the place of the variable in any
+  pattern that follows. Let's look at an example:
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+
+SELECT ?idles WHERE {
+  ?idles foaf:name &quot;Idles&quot; .
+  ?idles a mo:MusicGroup .
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.secondExampleQuery}} @readOnly={{true}} />
+
+<p>
+  In the above query, the first pattern specifies that we will bind a resource
+  that has a property
+  <code>foaf:name</code>
+  with value
+  <code>"Idles"</code>
+  to the variable
+  <code>?idles</code>. In the next pattern, we make sure that the bound resource
+  is of type
+  <code>mo:MusicGroup</code>. Note the
+  <code>a</code>
+  in the second triple pattern. This is a shorthand of
+  <code>rdf:type</code>
+  that is built into SPARQL. Feel free to use either, both are completely
+  interchangeable.
+</p>
+
+<p>Imagine we have the following dataset:</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix ex: &lt;http://example.com/ns/example/&gt; .
+@prefix mo: &lt;http://purl.org/ontology/mo/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1&gt; .
+
+ex:IdlesBand a mo:MusicGroup .
+ex:IdlesBand foaf:name &quot;Idles&quot; .
+
+ex:NotIdlesBand a ex:NotAMusicGroup .
+ex:NotIdlesBand foaf:name &quot;Idles&quot; .</code></pre>
+
+<p>
+  The first pattern in our query would bind both
+  <code>ex:IdlesBand</code>
+  and
+  <code>ex:NotIdlesBand</code>
+  to
+  <code>?idles</code>, since they both have a
+  <code>foaf:name</code>
+  equal to
+  <code>"Idles"</code>. But once the second pattern gets evaluated,
+  <code>ex:NotIdlesBand</code>
+  will be discarded since the triple
+  <code>ex:NotIdlesBand rdf:type mo:MusicGroup</code>
+  does not exist in our dataset.
+</p>
+
+<p>
+  Now that you have a grasp of how the
+  <code>SELECT</code>
+  query works, let's have a look at some exercises. Don't worry about defining
+  the graphs in these exercises. Although you can, using the
+  <code>FROM</code>
+  keyword, we've setup the Yagui editors to use the correct graphs by default.
+</p>
+
+<Exercise
+  @validQuery={{this.firstExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Let's start off with an exploratory query. We want to find out what types
+    are defined in our endpoint so we know what we can use later. Write a query
+    that returns all the types that are available in our endpoint. To remove
+    duplicates, you will want to use the
+    <code>DISTINCT</code>
+    modifier, which we will look at more in-depth later. Just place it right
+    after the
+    <code>SELECT</code>
+    keyword.
+  </p>
+</Exercise>
+<Exercise
+  @validQuery={{this.secondExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Now that we know that our dataset is filled with musical data, let's see
+    what kind of relationships that data has. Right now we're interested in
+    <code>mo:MusicArtist</code>. Write a query that finds all the properties of
+    <code>mo:MusicArtist</code>. You will want to use
+    <code>DISTINCT</code>
+    again to remove duplicates.
+  </p>
+  <Hint>
+    In this case, we're only interested in properties, or predicates, and they
+    are the second item of a triple.
+  </Hint>
+</Exercise>
+<Exercise
+  @validQuery={{this.thirdExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Given that
+    <code>mo:MusicArtist</code>
+    have a
+    <code>foaf:name</code>, let's write a query that returns the band named
+    "Massive Attack".
+  </p>
+</Exercise>
+<Exercise
+  @validQuery={{this.fourthExerciseValidQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    One more! Now that we have the artist Massive Attack, let's find out who's
+    in the band.
+    <Hint>
+      You can use the property
+      <code>mo:member_of</code>
+      to find a person who is a member of a band, but do keep in mind who is the
+      subject and object of that triple!
+    </Hint>
+  </p>
+</Exercise>

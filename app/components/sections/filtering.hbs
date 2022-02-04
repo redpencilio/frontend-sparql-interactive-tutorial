@@ -1,0 +1,220 @@
+<header>
+  <h2>Fitlering</h2>
+</header>
+
+<p>
+  SPARQL provides a number of ways filter out triples based on the value of
+  bound variables, as well as ways to bind values to variables based on other
+  variables and constants. We'll try to give a high level overview of the most
+  common functions you'll encounter, but if you want a very in-depth explanation
+  of all the options SPARQL gives you, we highly recommend looking at the
+  official language specification. We've already seen the <code>FILTER</code> function in
+  action before, which is used to accept triples that pass the filtering
+  function. Some <code>FILTER</code> examples:
+</p>
+
+<ul>
+  <li><code>FILTER REGEX(?bookTitle, "Dune")</code> you can filter string variables based
+    on whether they match a certain regular expression</li>
+  <li><code>FILTER (?price > 15)</code> arithmetic expressions are also supported for
+    numeric values</li>
+  <li><code>FILTER EXISTS { ?s ?p ?o }</code> lets you filter based on the presence of
+    certain triples, without binding new variables to the larger query</li>
+  <li><code>FILTER NOT EXISTS { ?s ?p ?o }</code> filters the resulting triples based on
+    whether or not the provided graph pattern is absent in the dataset</li>
+</ul>
+
+<p>
+  Additionally, there's a second way of filtering out triples, using <code>MINUS</code>,
+  which makes use of previously bound variables to determine if a triple should
+  be discarded or not. In the case of <code>MINUS</code>, the provided pattern must make
+  use of a previously bound variable, otherwise no triples will be filtered out.
+  Let's look at an example
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://example.com/&gt; .
+@prefix foaf: &lt;http://xmlns.com/foaf/0.1/&gt; .
+@prefix rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt; .
+
+:alice foaf:name &quot;Alice&quot; .
+:alice rdf:type foaf:Person .
+
+:bob foaf:name &quot;Bob&quot; .
+:bob rdf:type foaf:Person .
+
+:charlie foaf:name &quot;Charlie&quot; .
+:charlie rdf:type foaf:Person .</code></pre>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+
+SELECT ?person
+WHERE {
+  ?person a foaf:Person .
+  MINUS {
+    ?person foaf:name &quot;Bob&quot; .
+  }
+}</code></pre>
+
+<p>
+  In this case, we're telling the SPARQL engine to get all resources of type
+  <code>foaf:Person</code> and bind them to <code>?person</code>. Then we discard any triples where
+  the bound resource has a property <code>foaf:name</code> with value <code>"Bob"</code>. If we were
+  to change the pattern inside <code>MINUS</code> to, e.g. <code>?subject foaf:name "Bob"</code>, no
+  triple would be discarded as <code>?subject</code> has not been previously bound.
+</p>
+
+<p>
+  Note that replacing <code>?person</code> with <code>?subject</code> would work if <code>FILTER NOT EXISTS
+  {}</code> were being used, so keep in mind that the two methods are not entirely
+  interchangeable.
+</p>
+
+<p>
+  Another way of filtering based on the value of a variable is to the use
+  <code>VALUES</code> function, which lets you define a range of values that a variable is
+  allowed to be bound to, discarding any other alternatives.
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>@prefix : &lt;http://example.com/&gt;
+@prefix dcterms: &lt;http://purl.org/dc/terms/&gt; .
+
+:wheelOfTime dcterms:title &quot;The Wheel of Time&quot; .
+:wheelOfTime dcterms:publisher &quot;Orbit Books&quot; .
+:wheelOfTime :genre &quot;Fantasy&quot; .
+
+:witcher dcterms:title &quot;The Witcher&quot; .
+:witcher dcterms:publisher &quot;Orbit Books&quot; .
+:witcher :genre &quot;Fantasy&quot; .
+
+:dune dcterms:title &quot;Dune&quot; .
+:dune dcterms:publisher &quot;Penguin Random House&quot; .
+:dune :genre &quot;Science fiction&quot; .
+
+:discworld dcterms:title &quot;The Colour of Magic&quot; .
+:discworld dcterms:publisher &quot;Penguin Random House&quot; .
+:discworld :genre &quot;Fantasy&quot; .
+
+:houseOfLeaves dcterms:title &quot;House of Leaves&quot; .
+:houseOfLeaves dcterms:publisher &quot;Penguin Random House&quot; .
+:houseOfLeaves :genre &quot;Horror&quot; .</code></pre>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+
+SELECT ?book ?title ?publisher ?genre
+WHERE {
+  ?book dcterms:title ?title .
+  ?book dcterms:publisher ?publisher .
+  ?book :genre ?genre .
+  VALUES (?publisher ?genre) {
+    (&quot;Penguin Random House&quot; &quot;Science fiction&quot;)
+    (&quot;Orbit Books&quot; &quot;Fantasy&quot;)
+  }
+}</code></pre>
+
+<p>
+  Here, the <code>VALUES</code> function tells the SPARQL engine to match only when the
+  following conditions are matched: if <code>?publisher</code> is bound to <code>"Penguin Random
+  House"</code> then <code>?genre</code> must be bound to <code>"Science fiction"</code>, otherwise if
+  <code>?publisher</code> is bound to <code>"Orbit Books"</code> then <code>?genre</code> must be bound to
+  <code>"Fantasy"</code>. If <code>?publisher</code> and <code>?genre</code> are bound to any other combination
+  of values, discard them. The output of this query is
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>book</th>
+      <th>title</th>
+      <th>publisher</th>
+      <th>genre</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>:dune</td>
+      <td>&quot;Dune&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:wheelOfTime</td>
+      <td>&quot;The Wheel of Time&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:witcher</td>
+      <td>&quot;The Witcher&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>
+  It's also possible not to define a specific value for a certain combination
+  using the <code>UNDEF</code> keyword. Let's look at an example:
+</p>
+
+{{!-- prettier-ignore --}}
+<pre><code>PREFIX : &lt;http://example.com/&gt;
+PREFIX dcterms: &lt;http://purl.org/dc/terms/&gt;
+
+SELECT ?book ?title ?publisher ?genre
+WHERE {
+  ?book dcterms:title ?title .
+  ?book dcterms:publisher ?publisher .
+  ?book :genre ?genre .
+  VALUES (?publisher ?genre) {
+    (&quot;Penguin Random House&quot; UNDEF)
+    (&quot;Orbit Books&quot; &quot;Fantasy&quot;)
+  }
+}</code></pre>
+
+<table>
+  <thead>
+    <tr>
+      <th>book</th>
+      <th>title</th>
+      <th>publisher</th>
+      <th>genre</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>:houseOfLeaves</td>
+      <td>&quot;House of Leaves&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Horror&quot;</td>
+    </tr>
+    <tr>
+      <td>:dune</td>
+      <td>&quot;Dune&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Science fiction&quot;</td>
+    </tr>
+    <tr>
+      <td>:discworld</td>
+      <td>&quot;The Colour of Magic&quot;</td>
+      <td>&quot;Penguin Random House&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:wheelOfTime</td>
+      <td>&quot;The Wheel of Time&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+    <tr>
+      <td>:witcher</td>
+      <td>&quot;The Witcher&quot;</td>
+      <td>&quot;Orbit Books&quot;</td>
+      <td>&quot;Fantasy&quot;</td>
+    </tr>
+  </tbody>
+</table>

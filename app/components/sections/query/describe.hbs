@@ -1,0 +1,56 @@
+<header>
+  <h3><code>DESCRIBE</code> Query</h3>
+</header>
+
+<p>
+  The
+  <code>DESCRIBE</code>
+  query serves as a tool for data exploration. The exact behaviour of this query
+  type depends on the implementation of the SPARQL engine you use, but in
+  general it returns a graph containing any triples that include the resource
+  being described. This query can also take a
+  <code>WHERE</code>
+  clause to describe one or multiple specific resource. An example of this query
+  would be
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+
+DESCRIBE mo:MusicArtist</code></pre> --}}
+<Yasgui @defaultQuery={{this.firstExampleQuery}} @readOnly={{true}} />
+
+<p>
+  Note that in this case, the class
+  <code>mo:MusicArtist</code>
+  itself is being described.
+</p>
+<p>We can also describe a specific instance of the class
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+PREFIX rdf: &lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;
+PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+PREFIX open: &lt;http://open.vocab.org/terms/&gt;
+
+DESCRIBE ?artist WHERE {
+  ?artist a mo:MusicArtist .
+} LIMIT 1</code></pre> --}}
+<Yasgui @defaultQuery={{this.secondExampleQuery}} @readOnly={{true}} />
+
+<p>
+  This query will describe a single instance of a mo:MusicArtist and the output
+  contains all triples where this instance appears.
+</p>
+
+<p>
+  You might have noticed the new
+  <code>LIMIT</code>
+  syntax introduced in this last query. It's one of the query modifiers we'll
+  talk about more in-depth later and it serves to limit the amount of triples
+  you want to receive from the
+  <code>WHERE</code>
+  clause.
+</p>

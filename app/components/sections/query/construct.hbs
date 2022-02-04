@@ -1,0 +1,69 @@
+<header>
+  <h3><code>CONSTRUCT</code> Query</h3>
+</header>
+
+<p>
+  The
+  <code>CONSTRUCT</code>
+  query serves to create RDF graphs based on the provided patterns. This can be
+  useful to reshape a part of your data for further processing. Aside from the
+  <code>WHERE</code>
+  block, which behaves in the same way as the previous two query types, you must
+  also define how your new RDF graph should be structured using triples.
+</p>
+
+<p>
+  Let's say that we'd like to have a graph of all artists that have collaborated
+  on a track together. We notice that this relation is missing in our dataset,
+  but we do have the information about who worked on which track. What we could
+  do with this information is create a new graph where all artists who have
+  worked on the same track are related using the property
+  <code>mo:collaborated_with</code>. This could be done using the
+  <code>CONSTRUCT</code>
+  query below
+</p>
+
+{{!-- prettier-ignore --}}
+{{!-- <pre><code>PREFIX foaf: &lt;http://xmlns.com/foaf/0.1/&gt;
+PREFIX mo: &lt;http://purl.org/ontology/mo/&gt;
+
+CONSTRUCT {
+  ?artist mo:collaborated_with ?otherArtist .
+}
+WHERE {
+  ?record a mo:Record.
+  ?record mo:track ?track .
+  ?artist a ?track .
+  ?otherArtist foaf:made ?track .
+  FILTER (?artist != ?otherArtist) .
+}</code></pre> --}}
+<Yasgui @defaultQuery={{this.exampleQuery}} @readOnly={{true}} />
+
+<p>
+  Note the new
+  <code>FILTER</code>
+  syntax. This operation allows us to add extra constraints to the value of our
+  variables. We will be discuss this language feature more in-depth later, but
+  for now know that it can be used to filter out triples from your dataset.
+</p>
+
+<Exercise
+  @validQuery={{this.validQuery}}
+  @defaultGraph={{this.defaultGraph}}
+>
+  <p>
+    Let's construct a graph of artists that have collaborated on a work. Use the
+    <code>CONSTRUCT</code>
+    query to create such a graph. You will want to use
+    <code>LIMIT 100</code>
+    to limit the running time of the query. Simple write
+    <code>LIMIT 100</code>
+    after the closing brace of your query.
+  </p>
+  <Hint>
+    You can determine that two artists worked together on a song, album, ... if
+    they both have a
+    <code>foaf:made</code>
+    property with the same work as it's value.
+  </Hint>
+</Exercise>
