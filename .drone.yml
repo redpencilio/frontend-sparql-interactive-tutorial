@@ -75,11 +75,6 @@ steps:
     password:
       from_secret: docker_password
     purge: true
-- name: npm-release
-  image: plugins/npm
-  settings:
-    token:
-      from_secret: npm_access_token
 trigger:
   event:
     - tag
@@ -91,12 +86,5 @@ data: K4XHEIqlh8eDweq2WiLWD6PfO7XGaPpOeDVgLO9RhvWdzRXpdODd
 kind: secret
 name: docker_password
 data: Px9W27LuWvAV1ffUxulqfdQJRMTw8io1+BxQT3jz8D0hacEBDhrau5PpcgFEP8yzJjnpCO/CxMd3JnnEuj48Hw==
----
-kind: secret
-name: npm_access_token
-data: d7368bba-01b6-4fc8-aa34-a4856cb16e28
----
-kind: signature
-hmac: fabdb1bc38f228441253d721ebff06e67315e25b8b96d09390df50525ed01f9f
 
 ...
